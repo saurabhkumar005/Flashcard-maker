@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { uploadDeckPdf } from "../api/decks";
 
 function UploadPage() {
@@ -29,18 +30,27 @@ function UploadPage() {
   };
 
   return (
-    <section className="mx-auto max-w-xl px-4 py-10">
-      <h2 className="text-2xl font-bold text-slate-900">Upload PDF and Generate Deck</h2>
-      <p className="mt-2 text-slate-600">The AI teacher will create 10 concept-heavy flashcards with edge cases and examples.</p>
+    <section className="mx-auto max-w-xl px-4 py-12">
+      <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-extrabold text-slate-900">
+        Build Your Study Deck
+      </motion.h2>
+      <p className="mt-2 text-slate-600">
+        Drop a PDF and let the AI teacher craft concept-rich flashcards with worked examples.
+      </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <motion.form
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        onSubmit={handleSubmit}
+        className="glass-card mt-6 space-y-5 rounded-3xl p-6"
+      >
         <label className="block text-sm font-medium text-slate-700">
           Deck Title (optional)
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Fractions - Class 6"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500"
+            className="mt-1 w-full rounded-xl border border-white/70 bg-white/75 px-3 py-2.5 outline-none transition focus:border-indigo-400"
           />
         </label>
 
@@ -50,7 +60,7 @@ function UploadPage() {
             type="file"
             accept="application/pdf"
             onChange={(event) => setFile(event.target.files?.[0] || null)}
-            className="mt-1 block w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm"
+            className="mt-1 block w-full rounded-xl border border-white/70 bg-white/75 px-3 py-2.5 text-sm"
           />
         </label>
 
@@ -58,11 +68,11 @@ function UploadPage() {
 
         <button
           disabled={loading}
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 px-4 py-2.5 font-semibold text-white shadow-lg shadow-indigo-200 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Generating smart flashcards..." : "Generate Flashcards"}
         </button>
-      </form>
+      </motion.form>
     </section>
   );
 }

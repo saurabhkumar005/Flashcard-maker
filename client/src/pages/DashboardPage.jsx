@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import ProgressBar from "../components/ProgressBar";
 import { getDailyGoalStats, getDecks } from "../api/decks";
 
@@ -27,38 +28,59 @@ function DashboardPage() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-slate-900">Mastery Dashboard</h2>
-        <Link className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700" to="/upload">
+    <section className="mx-auto max-w-6xl px-4 py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 flex flex-wrap items-center justify-between gap-3"
+      >
+        <div>
+          <h2 className="text-3xl font-extrabold text-slate-900">Mastery Dashboard</h2>
+          <p className="mt-1 text-sm text-slate-600">Track daily consistency and level up every concept.</p>
+        </div>
+        <Link
+          className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 px-5 py-2.5 font-semibold text-white shadow-lg shadow-indigo-200 transition hover:-translate-y-0.5"
+          to="/upload"
+        >
           + Create New Deck
         </Link>
-      </div>
+      </motion.div>
 
-      <article className="mb-5 rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50 to-emerald-50 p-4">
+      <motion.article
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="glass-card mb-6 rounded-3xl p-5"
+      >
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-semibold text-slate-700">Daily Goal Tracker</p>
           <p className="text-sm font-bold text-indigo-700">
             {dailyGoal.reviewedToday}/{dailyGoal.dailyGoal} cards reviewed today
           </p>
         </div>
-        <div className="mt-2">
+        <div className="mt-3">
           <ProgressBar value={Math.min(100, Math.round((dailyGoal.reviewedToday / Math.max(1, dailyGoal.dailyGoal)) * 100))} />
         </div>
-      </article>
+      </motion.article>
 
       {loading && <p className="text-slate-600">Loading decks...</p>}
       {error && <p className="rounded-lg bg-rose-50 p-3 text-rose-600">{error}</p>}
 
       {!loading && !error && !decks.length && (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
+        <div className="glass-card rounded-3xl p-8 text-center text-slate-600">
           Upload your first PDF to generate an AI study deck.
         </div>
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
-        {decks.map((deck) => (
-          <article key={deck._id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        {decks.map((deck, index) => (
+          <motion.article
+            key={deck._id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.06 }}
+            whileHover={{ y: -6, scale: 1.01 }}
+            className="glass-card rounded-3xl p-5"
+          >
             <h3 className="text-lg font-semibold text-slate-900">{deck.title}</h3>
             <p className="mt-1 text-sm text-slate-500">{deck.totalCards} cards</p>
             <div className="mt-4 space-y-2">
@@ -70,11 +92,11 @@ function DashboardPage() {
             </div>
             <Link
               to={`/study/${deck._id}`}
-              className="mt-5 inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+              className="mt-5 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:scale-[1.03] hover:bg-slate-700"
             >
               Study Deck
             </Link>
-          </article>
+          </motion.article>
         ))}
       </div>
     </section>

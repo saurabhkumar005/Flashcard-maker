@@ -96,7 +96,7 @@ function StudyPage() {
   }
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-8">
+    <section className="mx-auto max-w-4xl px-4 py-10">
       <AnimatePresence>
         {celebration && (
           <motion.div
@@ -121,34 +121,43 @@ function StudyPage() {
         )}
       </AnimatePresence>
 
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">{deck?.title}</h2>
+          <h2 className="text-3xl font-extrabold text-slate-900">{deck?.title}</h2>
           <p className="text-sm text-slate-500">
             Card {currentIndex + 1} of {deck?.cards?.length || 0}
           </p>
         </div>
-        <Link to="/" className="rounded-lg bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300">
+        <Link to="/" className="rounded-xl bg-white/80 px-4 py-2 text-sm font-semibold text-slate-700 shadow transition hover:bg-white">
           Back to Dashboard
         </Link>
-      </div>
+      </motion.div>
 
-      <div className="mb-6 space-y-2 rounded-xl border border-slate-200 bg-white p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="glass-card mb-6 space-y-2 rounded-3xl p-4"
+      >
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-slate-700">Mastery Progress</span>
           <span className="font-bold text-slate-900">{progressPercent}%</span>
         </div>
         <ProgressBar value={progressPercent} />
-      </div>
+      </motion.div>
 
       {currentCard && (
         <div className="space-y-4">
           <Flashcard card={currentCard} showAnswer={showAnswer} onFlip={() => setShowAnswer((value) => !value)} />
           {showAnswer && currentCard.teacherTip && (
-            <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-card rounded-2xl border border-indigo-200/70 bg-indigo-50/75 px-4 py-3"
+            >
               <p className="text-xs font-bold uppercase tracking-wide text-indigo-700">Teacher&apos;s Note</p>
               <p className="mt-1 text-sm text-indigo-900">{currentCard.teacherTip}</p>
-            </div>
+            </motion.div>
           )}
           <MasteryButtons onSelect={handleMastery} loading={saving} />
         </div>
