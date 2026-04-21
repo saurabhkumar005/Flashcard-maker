@@ -6,7 +6,7 @@ export const AUTH_TOKEN_KEY = "flashcard_maker_token";
 
 
 const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`, 
+  baseURL: `${API_BASE_URL}/api/`, 
 });
 
 api.interceptors.request.use((config) => {

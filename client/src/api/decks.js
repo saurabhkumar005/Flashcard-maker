@@ -13,23 +13,23 @@ export const uploadDeckPdf = async ({ file, title }) => {
 };
 
 export const getDecks = async () => {
-  const { data } = await api.get("/decks");
+  const { data } = await api.get("decks");
   return data;
 };
 
 export const getDeckById = async (deckId) => {
-  const { data } = await api.get(`/decks/${deckId}`);
+  const { data } = await api.get(`decks/${deckId}`);
   return data;
 };
 
 export const updateMastery = async ({ deckId, cardId, masteryLevel }) => {
-  const { data } = await api.patch(`/mastery/${deckId}/cards/${cardId}`, {
+  const { data } = await api.patch(`mastery/${deckId}/cards/${cardId}`, {
     masteryLevel,
   });
   return data;
 };
 
 export const getDailyGoalStats = async () => {
-  const { data } = await api.get("/mastery/daily-goal");
+  const { data } = await api.get("mastery/daily-goal");
   return data;
 };
