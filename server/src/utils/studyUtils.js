@@ -42,9 +42,23 @@ const getMasteryProgress = (cards = []) => {
   return Math.round((masteredCount / cards.length) * 100);
 };
 
+const getNextReviewDate = (masteryLevel, baseDate = new Date()) => {
+  const date = new Date(baseDate);
+  const offsets = {
+    still_learning: 1,
+    almost_there: 3,
+    mastered: 7,
+  };
+
+  const dayOffset = offsets[masteryLevel] ?? 1;
+  date.setDate(date.getDate() + dayOffset);
+  return date;
+};
+
 module.exports = {
   MASTERY_ORDER,
   clampText,
   chunkText,
   getMasteryProgress,
+  getNextReviewDate,
 };

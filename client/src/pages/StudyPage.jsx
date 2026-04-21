@@ -1,9 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Flashcard from "../components/Flashcard";
 import MasteryButtons from "../components/MasteryButtons";
 import ProgressBar from "../components/ProgressBar";
 import { getDeckById, updateMastery } from "../api/decks";
+
+const ENCOURAGEMENTS = [
+  "Great job! Your neural pathways are getting stronger!",
+  "Excellent work. You're building long-term memory!",
+  "Mastery unlocked. Keep the momentum going!",
+  "Brilliant recall! Your future self will thank you.",
+];
 
 function StudyPage() {
   const { deckId } = useParams();
@@ -14,6 +22,7 @@ function StudyPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [celebration, setCelebration] = useState(null);
 
   useEffect(() => {
     const loadDeck = async () => {
@@ -54,6 +63,11 @@ function StudyPage() {
       });
 
       setProgressPercent(data.progressPercent);
+      if (masteryLevel === "mastered") {
+        const text = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
+        setCelebration({ id: Date.now(), text });
+        window.setTimeout(() => setCelebration(null), 2200);
+      }
       setShowAnswer(false);
       setCurrentIndex((index) => {
         if (!deck?.cards?.length) return 0;
@@ -83,6 +97,30 @@ function StudyPage() {
 
   return (
     <section className="mx-auto max-w-4xl px-4 py-8">
+      <AnimatePresence>
+        {celebration && (
+          <motion.div
+            initial={{ opacity: 0, y: -18, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -18 }}
+            className="fixed right-4 top-20 z-40 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 shadow-lg"
+          >
+            <p className="text-sm font-semibold text-emerald-700">{celebration.text}</p>
+            <div className="mt-2 flex gap-1">
+              {[...Array(10)].map((_, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ y: 0, opacity: 1 }}
+                  animate={{ y: index % 2 ? -8 : -14, opacity: 0 }}
+                  transition={{ duration: 0.7, delay: index * 0.03 }}
+                  className="inline-block h-2 w-2 rounded-full bg-emerald-500"
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">{deck?.title}</h2>
@@ -106,6 +144,12 @@ function StudyPage() {
       {currentCard && (
         <div className="space-y-4">
           <Flashcard card={currentCard} showAnswer={showAnswer} onFlip={() => setShowAnswer((value) => !value)} />
+          {showAnswer && currentCard.teacherTip && (
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-indigo-700">Teacher&apos;s Note</p>
+              <p className="mt-1 text-sm text-indigo-900">{currentCard.teacherTip}</p>
+            </div>
+          )}
           <MasteryButtons onSelect={handleMastery} loading={saving} />
         </div>
       )}

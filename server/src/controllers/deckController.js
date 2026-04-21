@@ -3,9 +3,7 @@ const Deck = require("../models/Deck");
 const Mastery = require("../models/Mastery");
 const { generateFlashcardsFromText } = require("../services/geminiService");
 const asyncHandler = require("../middleware/asyncHandler");
-const { chunkText, clampText, getMasteryProgress } = require("../utils/studyUtils");
-
-const DEFAULT_USER = "anonymous";
+const { chunkText, clampText, getMasteryProgress, getNextReviewDate } = require("../utils/studyUtils");
 
 const extractPdfText = async (buffer) => {
   try {
@@ -58,10 +56,12 @@ const createDeckFromPdf = asyncHandler(async (req, res) => {
   const normalizedCards = cards.map((card) => ({
     question: card.question.trim(),
     answer: card.answer.trim(),
+    teacherTip: card.teacherTip?.trim() || "Break it into smaller steps and explain it out loud once.",
     masteryLevel: "still_learning",
   }));
 
   const deck = await Deck.create({
+    userId: req.user._id,
     title: req.body.title?.trim() || req.file.originalname.replace(/\.pdf$/i, ""),
     sourceFileName: req.file.originalname,
     cards: normalizedCards,
@@ -69,11 +69,15 @@ const createDeckFromPdf = asyncHandler(async (req, res) => {
 
   const cardStatuses = {};
   deck.cards.forEach((card) => {
-    cardStatuses[card._id.toString()] = "still_learning";
+    cardStatuses[card._id.toString()] = {
+      masteryLevel: "still_learning",
+      nextReviewDate: getNextReviewDate("still_learning"),
+      lastReviewedAt: null,
+    };
   });
 
   await Mastery.create({
-    userId: DEFAULT_USER,
+    userId: req.user._id,
     deckId: deck._id,
     cardStatuses,
     masteredCount: 0,
@@ -87,7 +91,7 @@ const createDeckFromPdf = asyncHandler(async (req, res) => {
 });
 
 const getDecks = asyncHandler(async (req, res) => {
-  const decks = await Deck.find().sort({ createdAt: -1 }).lean();
+  const decks = await Deck.find({ userId: req.user._id }).sort({ createdAt: -1 }).lean();
 
   const payload = decks.map((deck) => ({
     _id: deck._id,
@@ -102,7 +106,7 @@ const getDecks = asyncHandler(async (req, res) => {
 });
 
 const getDeckById = asyncHandler(async (req, res) => {
-  const deck = await Deck.findById(req.params.deckId);
+  const deck = await Deck.findOne({ _id: req.params.deckId, userId: req.user._id });
   if (!deck) {
     const error = new Error("Deck not found");
     error.statusCode = 404;

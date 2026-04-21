@@ -1,9 +1,4 @@
-import axios from "axios";
-import { API_BASE_URL } from "./config";
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-});
+import api from "./client";
 
 export const uploadDeckPdf = async ({ file, title }) => {
   const payload = new FormData();
@@ -31,5 +26,10 @@ export const updateMastery = async ({ deckId, cardId, masteryLevel }) => {
   const { data } = await api.patch(`/mastery/${deckId}/cards/${cardId}`, {
     masteryLevel,
   });
+  return data;
+};
+
+export const getDailyGoalStats = async () => {
+  const { data } = await api.get("/mastery/daily-goal");
   return data;
 };

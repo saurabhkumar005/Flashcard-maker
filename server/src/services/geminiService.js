@@ -14,6 +14,14 @@ const initGemini = (apiKey) => {
 const stripCodeFence = (rawText) => rawText.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
 const canRetryWithDifferentModel = (message) =>
   /not found|not supported for generateContent|service unavailable|high demand|429/i.test(message || "");
+const repairMalformedJson = (rawText) => {
+  if (!rawText) return null;
+  const fenced = stripCodeFence(rawText);
+  const arrayMatch = fenced.match(/\[[\s\S]*\]/);
+  if (arrayMatch) return arrayMatch[0];
+  const objectMatch = fenced.match(/\{[\s\S]*\}/);
+  return objectMatch ? `[${objectMatch[0]}]` : null;
+};
 
 const generateFlashcardsFromText = async (text) => {
   if (!model || !client) {
@@ -21,8 +29,13 @@ const generateFlashcardsFromText = async (text) => {
   }
 
   const prompt = `You are a high-quality teacher helping a student deeply understand material.
-Analyze this text. Create 10 flashcards that focus on key concepts, edge cases, and worked examples. Do not just provide simple definitions.
-Return exactly in JSON format: [{"question":"...","answer":"..."}]
+Create exactly 10 flashcards from the text.
+For every card, include:
+- question: targets edge cases or worked examples (avoid rote definitions)
+- answer: concise but complete explanation
+- teacherTip: a mnemonic or encouraging hint related to the concept
+Return ONLY valid JSON in this exact format:
+[{"question":"...","answer":"...","teacherTip":"..."}]
 
 TEXT START
 ${text}
@@ -56,7 +69,15 @@ TEXT END`;
   try {
     parsed = JSON.parse(stripCodeFence(content));
   } catch (error) {
-    throw new Error("Failed to parse Gemini response as JSON flashcards");
+    const repaired = repairMalformedJson(content);
+    if (!repaired) {
+      throw new Error("Failed to parse Gemini response as JSON flashcards");
+    }
+    try {
+      parsed = JSON.parse(repaired);
+    } catch (repairError) {
+      throw new Error("Failed to parse Gemini response as JSON flashcards");
+    }
   }
 
   const validCards = Array.isArray(parsed)

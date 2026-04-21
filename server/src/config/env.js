@@ -11,4 +11,5 @@ module.exports = {
   mongoUri: process.env.MONGODB_URI,
   geminiApiKey: process.env.GEMINI_API_KEY,
   clientUrl: process.env.CLIENT_URL,
+  jwtSecret: process.env.JWT_SECRET || "dev_secret_change_me",
 };

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProgressBar from "../components/ProgressBar";
-import { getDecks } from "../api/decks";
+import { getDailyGoalStats, getDecks } from "../api/decks";
 
 function DashboardPage() {
   const [decks, setDecks] = useState([]);
+  const [dailyGoal, setDailyGoal] = useState({ reviewedToday: 0, dailyGoal: 30 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -12,8 +13,9 @@ function DashboardPage() {
     const loadDecks = async () => {
       try {
         setLoading(true);
-        const data = await getDecks();
-        setDecks(data);
+        const [decksData, goalData] = await Promise.all([getDecks(), getDailyGoalStats()]);
+        setDecks(decksData);
+        setDailyGoal(goalData);
       } catch (err) {
         setError(err?.response?.data?.message || "Failed to load decks.");
       } finally {
@@ -32,6 +34,18 @@ function DashboardPage() {
           + Create New Deck
         </Link>
       </div>
+
+      <article className="mb-5 rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50 to-emerald-50 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-slate-700">Daily Goal Tracker</p>
+          <p className="text-sm font-bold text-indigo-700">
+            {dailyGoal.reviewedToday}/{dailyGoal.dailyGoal} cards reviewed today
+          </p>
+        </div>
+        <div className="mt-2">
+          <ProgressBar value={Math.min(100, Math.round((dailyGoal.reviewedToday / Math.max(1, dailyGoal.dailyGoal)) * 100))} />
+        </div>
+      </article>
 
       {loading && <p className="text-slate-600">Loading decks...</p>}
       {error && <p className="rounded-lg bg-rose-50 p-3 text-rose-600">{error}</p>}
