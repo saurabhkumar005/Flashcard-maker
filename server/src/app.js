@@ -5,10 +5,15 @@ const deckRoutes = require("./routes/deckRoutes");
 const masteryRoutes = require("./routes/masteryRoutes");
 const { clientUrl } = require("./config/env");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
+const { allowedOrigins } = require("./config/env");
 
 const app = express();
 
-app.use(cors({ origin: clientUrl }));
+app.use(cors({ 
+  origin: allowedOrigins,
+  credentials: true 
+}));
+
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {

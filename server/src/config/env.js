@@ -10,6 +10,7 @@ module.exports = {
   port: Number(process.env.PORT),
   mongoUri: process.env.MONGODB_URI,
   geminiApiKey: process.env.GEMINI_API_KEY,
-  clientUrl: process.env.CLIENT_URL,
-  jwtSecret: process.env.JWT_SECRET || "dev_secret_change_me",
+  allowedOrigins: process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : ["http://localhost:5173"],
+  clientUrl: process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",")[0] : "http://localhost:5173",
+  jwtSecret: process.env.JWT_SECRET || "secretsaurabh1529",
 };
