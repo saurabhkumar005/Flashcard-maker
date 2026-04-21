@@ -12,7 +12,7 @@ Source Code: github.com/saurabhkumar005/Flashcard-maker
 # 📽️ Project Note: Decisions & Trade-offs
 This project was built within a 24-hour sprint for the Cuemath AI Builder Challenge. Below is the engineering rationale behind the core architecture.
 
-1. Smart Choices & Engineering Logic
+**Smart Choices & Engineering Logic**
 AI Model (Gemini 1.5 Flash): I chose Gemini 1.5 Flash over larger models for its superior speed-to-accuracy ratio. In a learning environment, low latency is critical to maintain user engagement during the "Generation" phase.
 
 The "Teacher Persona" Prompt: Instead of simple definitions, I implemented a custom "High-Quality Teacher" system prompt. It instructs the AI to identify edge cases and worked examples within the PDF text, ensuring cards challenge the user's deep understanding rather than just rote memory.
@@ -21,14 +21,14 @@ Spaced Repetition (Leitner Logic): I implemented a manual Leitner-style mastery 
 
 Security-First Architecture: All AI orchestration happens on the Backend. By using a Node/Express proxy, I ensured that sensitive API keys are never exposed to the client-side browser, meeting professional security standards.
 
-2. Strategic Trade-offs
+**Strategic Trade-offs**
 Memory-Based PDF Processing: I utilized multer memory storage for PDF ingestion.
 
 Trade-off: While this limits the file size compared to disk storage or S3, it significantly increased processing speed and simplified the deployment pipeline on Render for this MVP.
 
 Minimalist UI vs. Feature Density: I prioritized a "Distraction-Free" study interface. While I could have added more UI bells and whistles, I focused on the core Card Flip Animation (via Framer Motion) to ensure the primary study action felt tactile and delightful.
 
-3. Future Roadmap 
+**Future Roadmap** 
 If I had more time to evolve this project:
 
 Voice-First Mode: Implementing Web Speech APIs to allow students to "speak" their answers, which the AI would then evaluate for conceptual accuracy.
@@ -56,7 +56,7 @@ MongoDB Atlas Account
 
 Google AI Studio API Key (Gemini)
 
-1. Backend Setup
+**Backend Setup**
 Bash
 cd server
 npm install
@@ -67,7 +67,7 @@ GEMINI_API_KEY=your_gemini_key
 CLIENT_URL=http://localhost:5173
 Run the server: node server.js
 
-2. Frontend Setup
+**Frontend Setup**
 Bash
 cd client
 npm install
