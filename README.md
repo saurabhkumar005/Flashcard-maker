@@ -9,7 +9,7 @@ Live Application: studycardfrompdf.vercel.app
 
 Source Code: github.com/saurabhkumar005/Flashcard-maker
 
-📽️ Project Note: Decisions & Trade-offs
+# 📽️ Project Note: Decisions & Trade-offs
 This project was built within a 24-hour sprint for the Cuemath AI Builder Challenge. Below is the engineering rationale behind the core architecture.
 
 1. Smart Choices & Engineering Logic
@@ -75,4 +75,4 @@ npm install
 VITE_API_BASE_URL=http://localhost:5000
 Run the client: npm run dev
 
-Developed with ❤️ by Saurabh Kumar AI Builder Role
+Developed with ❤️ by Saurabh Kumar
